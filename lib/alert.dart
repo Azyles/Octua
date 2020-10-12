@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:torch/torch.dart';
+import 'package:uuid/uuid.dart';
 import 'arm.dart';
 
 import 'package:intl/intl.dart';
@@ -23,14 +24,19 @@ class _AlertViewState extends State<AlertView> {
       FirebaseFirestore.instance.collection('${auth.currentUser.uid}');
 
   Future<void> addUser(String log) {
+    var uuid = Uuid();
+    String uniqueid = uuid.v1().toString();
     // Call the user's CollectionReference to add a new user
     return users
-        .doc()
+        .doc(uniqueid)
         .set({
           'timestamp': DateTime.now().toLocal().millisecondsSinceEpoch,
-          'time':
-              DateFormat.yMMMd('en_US').add_jm().format(new DateTime.now()).toString(),
+          'time': DateFormat.yMMMd('en_US')
+              .add_jm()
+              .format(new DateTime.now())
+              .toString(),
           'log': log,
+          'id': uniqueid
         })
         .then((value) => print("Logged failed Attempt"))
         .catchError((error) => print("Failed to add user: $error"));

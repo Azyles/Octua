@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -10,8 +11,9 @@ class LogView extends StatefulWidget {
 }
 
 class _LogViewState extends State<LogView> {
-  Query collectionReference  =
-      FirebaseFirestore.instance.collection('${auth.currentUser.uid}').orderBy("timestamp");
+  CollectionReference users =
+      FirebaseFirestore.instance.collection('${auth.currentUser.uid}');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +24,7 @@ class _LogViewState extends State<LogView> {
         title: Text("Octua Log"),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: collectionReference.snapshots(),
+        stream: users.snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('Something went wrong'));
@@ -35,9 +37,28 @@ class _LogViewState extends State<LogView> {
           return new ListView(
             // ignore: deprecated_member_use
             children: snapshot.data.documents.map((DocumentSnapshot document) {
-              return  ListTile(
-                title: new Text(document.data()['time']),
-                subtitle: new Text(document.data()['log']),
+              return Slidable(
+                actionPane: SlidableDrawerActionPane(),
+                actionExtentRatio: 0.25,
+                child: ListTile(
+                  title: new Text(document.data()['time']),
+                  subtitle: new Text(document.data()['log']),
+                ),
+                actions: <Widget>[
+                  IconSlideAction(
+                    caption: 'Delete',
+                    color: Colors.red,
+                    icon: Icons.delete_forever_outlined,
+                    onTap: () {
+                      users
+                          .doc(document.data()['id'])
+                          .delete()
+                          .then((value) => print("User Deleted"))
+                          .catchError((error) =>
+                              print("Failed to delete user: $error"));
+                    },
+                  ),
+                ],
               );
             }).toList(),
           );
