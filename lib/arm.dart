@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:Octua/log.dart';
 import 'package:Octua/scan.dart';
 import 'package:Octua/scan.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,7 +18,7 @@ class ArmView extends StatefulWidget {
 
 class _ArmViewState extends State<ArmView> {
   List<String> data = [];
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,7 +134,10 @@ class _ArmViewState extends State<ArmView> {
             ),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => LogView()));
+            },
             child: Container(
               decoration: BoxDecoration(
                   shape: BoxShape.circle, color: Colors.pink[100]),

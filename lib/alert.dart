@@ -29,8 +29,8 @@ class _AlertViewState extends State<AlertView> {
         .set({
           'timestamp': DateTime.now().toLocal().millisecondsSinceEpoch,
           'time':
-              DateFormat.yMMMd('en_US').format(new DateTime.now()).toString(),
-          'Log': log,
+              DateFormat.yMMMd('en_US').add_jm().format(new DateTime.now()).toString(),
+          'log': log,
         })
         .then((value) => print("Logged failed Attempt"))
         .catchError((error) => print("Failed to add user: $error"));
