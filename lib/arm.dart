@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:Octua/log.dart';
 import 'package:Octua/scan.dart';
 import 'package:Octua/scan.dart';
+import 'package:Octua/timerview.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,9 @@ import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_camera_ml_vision/flutter_camera_ml_vision.dart';
+import 'package:uuid/uuid.dart';
+
+import 'package:intl/intl.dart';
 
 class ArmView extends StatefulWidget {
   @override
@@ -17,11 +22,33 @@ class ArmView extends StatefulWidget {
 }
 
 class _ArmViewState extends State<ArmView> {
-  List<String> data = [];
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  CollectionReference users =
+      FirebaseFirestore.instance.collection('${auth.currentUser.uid}');
 
+  Future<void> addUser(String log) {
+    var uuid = Uuid();
+    String uniqueid = uuid.v1().toString();
+    // Call the user's CollectionReference to add a new user
+    return users
+        .doc(uniqueid)
+        .set({
+          'timestamp': DateTime.now().toLocal().millisecondsSinceEpoch,
+          'time': DateFormat.yMMMd('en_US')
+              .add_jm()
+              .format(new DateTime.now())
+              .toString(),
+          'log': log,
+          'id': uniqueid
+        })
+        .then((value) => print("Logged button Press"))
+        .catchError((error) => print("Failed to add user: $error"));
+  } 
+  bool soundplaying = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -37,6 +64,7 @@ class _ArmViewState extends State<ArmView> {
           ),
           GestureDetector(
             onTap: () async {
+              /*
               showDialog(
                 barrierColor: Colors.transparent,
                 context: context,
@@ -99,9 +127,9 @@ class _ArmViewState extends State<ArmView> {
                   ),
                 ),
               );
-              await Future.delayed(const Duration(seconds: 1), () {});
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => ScanView()));
+              */
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TimerDelay()));
             },
             child: Container(
               decoration: BoxDecoration(
@@ -118,7 +146,10 @@ class _ArmViewState extends State<ArmView> {
             ),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () async {
+              addUser("Pressed Alert Button");
+              print("Button Pressed");
+            },
             child: Container(
               decoration: BoxDecoration(
                   shape: BoxShape.circle, color: Colors.deepOrangeAccent[100]),

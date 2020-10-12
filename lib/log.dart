@@ -22,6 +22,7 @@ class _LogViewState extends State<LogView> {
         elevation: 0,
         centerTitle: true,
         title: Text("Octua Log"),
+        backgroundColor: Colors.deepOrangeAccent,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: users.snapshots(),

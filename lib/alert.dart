@@ -1,14 +1,10 @@
 import 'dart:async';
-
-import 'package:audioplayer/audioplayer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:torch/torch.dart';
 import 'package:uuid/uuid.dart';
 import 'arm.dart';
-
 import 'package:intl/intl.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
@@ -44,9 +40,9 @@ class _AlertViewState extends State<AlertView> {
 
   final TextEditingController _emailController = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
-
-  AudioPlayer audioPlugin = AudioPlayer();
-
+  bool cooldown = false;
+  String error = "";
+  int failed = 0;
   Timer _timer;
   int _start = 30;
   void startTimer() {
@@ -86,7 +82,7 @@ class _AlertViewState extends State<AlertView> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 40,
+                  height: 90,
                 ),
                 Center(
                   child: Text("Octua",
@@ -125,15 +121,34 @@ class _AlertViewState extends State<AlertView> {
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 10,
           ),
-          Center(
+          dismissAlert(context),
+        ],
+      ),
+    );
+  }
+
+  Widget dismissAlert(BuildContext context) {
+    CollectionReference users = FirebaseFirestore.instance.collection('UserData');
+
+    return FutureBuilder<DocumentSnapshot>(
+      future: users.doc('${auth.currentUser.uid}').get(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text("Something went wrong");
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic> data = snapshot.data.data();
+          return Center(
             child: Container(
               child: new Material(
                 child: new InkWell(
                   onTap: () async {
                     if (_formKey.currentState.validate()) {
-                      if (_emailController.text == auth.currentUser.email) {
+                      if (_emailController.text == data['pwd']) {
                         _timer.cancel();
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => ArmView()));
@@ -169,9 +184,44 @@ class _AlertViewState extends State<AlertView> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-          ),
-        ],
-      ),
+          );
+        }
+
+        return Center(
+            child: Container(
+              child: new Material(
+                child: new InkWell(
+                  onTap: () async {
+                  },
+                  child: new Container(
+                    child: Center(
+                      child: Text(
+                        'Login',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: MediaQuery.of(context).size.height * 0.03,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ),
+                    height: MediaQuery.of(context).size.height * 0.06,
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                color: Colors.transparent,
+              ),
+              height: MediaQuery.of(context).size.height * 0.06,
+              width: MediaQuery.of(context).size.width * 0.85,
+              decoration: BoxDecoration(
+                color: Colors.deepOrange[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+      },
     );
   }
 }

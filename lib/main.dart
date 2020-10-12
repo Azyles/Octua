@@ -42,8 +42,10 @@ class App extends StatelessWidget {
           FirebaseAuth auth = FirebaseAuth.instance;
 
           if (auth.currentUser != null) {
+            print("Logged In");
             return ArmView();
           } else {
+            print("Logged Out");
             return SignUpView();
           }
         }
