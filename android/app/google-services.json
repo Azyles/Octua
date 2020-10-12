@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "771456074027",
+    "firebase_url": "https://octua-be5d2.firebaseio.com",
+    "project_id": "octua-be5d2",
+    "storage_bucket": "octua-be5d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771456074027:android:599402f3d03cdc1d37056e",
+        "android_client_info": {
+          "package_name": "com.example.Octua"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771456074027-0iuss1el2lr45ko8p0hjqsprk6qvta81.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrLOV5XbVUNpniX_mbtArFX2R8sxV0aMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771456074027-0iuss1el2lr45ko8p0hjqsprk6qvta81.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

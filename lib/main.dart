@@ -1,4 +1,5 @@
 import 'package:Octua/arm.dart';
+import 'package:Octua/scan.dart';
 import 'package:flutter/material.dart';
 
 void main() {

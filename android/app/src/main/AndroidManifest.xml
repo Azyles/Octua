@@ -33,6 +33,12 @@
               android:name="io.flutter.embedding.android.SplashScreenDrawable"
               android:resource="@drawable/launch_background"
               />
+            
+            <meta-data
+              android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+              android:value="ocr,label,barcode,face" />
+              <!-- To use multiple models: android:value="ocr,label,barcode,face" -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -43,5 +49,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            
     </application>
 </manifest>
