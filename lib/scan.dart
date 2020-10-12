@@ -11,7 +11,6 @@ class ScanView extends StatefulWidget {
 }
 
 class _ScanViewState extends State<ScanView> {
-  List<Face> _faces = [];
   final _scanKey = GlobalKey<CameraMlVisionState>();
   CameraLensDirection cameraLensDirection = CameraLensDirection.front;
   FaceDetector detector =

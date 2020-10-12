@@ -1,6 +1,8 @@
 import 'package:Octua/arm.dart';
-import 'package:Octua/scan.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'auth/registerview.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,10 +18,39 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         splashColor: Colors.deepOrangeAccent[100],
         primarySwatch: Colors.deepOrange,
-        
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ArmView(),
+      home: App(),
+    );
+  }
+}
+
+class App extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      // Initialize FlutterFire
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        // Check for errors
+        if (snapshot.hasError) {
+          return Text("Something went wrong");
+        }
+
+        // Once complete, show your application
+        if (snapshot.connectionState == ConnectionState.done) {
+          FirebaseAuth auth = FirebaseAuth.instance;
+
+          if (auth.currentUser != null) {
+            return ArmView();
+          } else {
+            return SignUpView();
+          }
+        }
+
+        // Otherwise, show something whilst waiting for initialization to complete
+        return CircularProgressIndicator();
+      },
     );
   }
 }
