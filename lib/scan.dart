@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:Octua/alert.dart';
 import 'package:Octua/arm.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
@@ -33,8 +34,8 @@ class _ScanViewState extends State<ScanView> {
             }
             setState(() {
               detector.close();
-              //Navigator.push(
-              //    context, MaterialPageRoute(builder: (context) => ArmView()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => AlertView()));
             });
           },
           onDispose: () {
