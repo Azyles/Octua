@@ -36,6 +36,8 @@ dependencies:
   uuid: ^2.2.2
   vibrate: ^0.0.4
   flutter_slidable: ^0.5.7
+  sensors: ^0.4.2+5
+
   
 dev_dependencies:
   flutter_test:

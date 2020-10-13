@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,50 +19,64 @@ class _LogViewState extends State<LogView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
         title: Text("Octua Log"),
-        backgroundColor: Colors.deepOrangeAccent,
+        backgroundColor: Colors.black,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: users.snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return Center(child: Text('Something went wrong'));
+            return Center(
+                child: Text(
+              'Something went wrong',
+              style: TextStyle(color: Colors.black),
+            ));
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: Text("Loading..."));
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           return new ListView(
             // ignore: deprecated_member_use
             children: snapshot.data.documents.map((DocumentSnapshot document) {
-              return Slidable(
-                actionPane: SlidableDrawerActionPane(),
-                actionExtentRatio: 0.25,
-                child: ListTile(
-                  title: new Text(document.data()['time']),
-                  subtitle: new Text(document.data()['log']),
-                ),
-                actions: <Widget>[
-                  IconSlideAction(
-                    caption: 'Delete',
-                    color: Colors.red,
-                    icon: Icons.delete_forever_outlined,
-                    onTap: () {
-                      users
-                          .doc(document.data()['id'])
-                          .delete()
-                          .then((value) => print("User Deleted"))
-                          .catchError((error) =>
-                              print("Failed to delete user: $error"));
-                    },
+              if (document.data() == null) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+               
+                return Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: 0.25,
+                  child: ListTile(
+                    title: new Text(document.data()['time'],style: TextStyle(color: Colors.red[400],fontWeight: FontWeight.w700),),
+                    subtitle: new Text(document.data()['log'],style: TextStyle(color: Colors.grey[700],fontWeight: FontWeight.w500)),
                   ),
-                ],
-              );
+                  actions: <Widget>[
+                    IconSlideAction(
+                      caption: 'Delete',
+                      color: Colors.red,
+                      icon: Icons.delete_forever_outlined,
+                      onTap: () {
+                        users
+                            .doc(document.data()['id'])
+                            .delete()
+                            .then((value) => print("User Deleted"))
+                            .catchError((error) =>
+                                print("Failed to delete user: $error"));
+                      },
+                    ),
+                  ],
+                );
+                
+              }
             }).toList(),
           );
         },

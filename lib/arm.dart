@@ -5,6 +5,7 @@ import 'package:Octua/scan.dart';
 import 'package:Octua/scan.dart';
 import 'package:Octua/timerview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,9 @@ import 'package:uuid/uuid.dart';
 
 import 'package:intl/intl.dart';
 
+
+FirebaseAuth auth = FirebaseAuth.instance;
+
 class ArmView extends StatefulWidget {
   @override
   _ArmViewState createState() => _ArmViewState();
@@ -25,7 +29,7 @@ class _ArmViewState extends State<ArmView> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference users =
       FirebaseFirestore.instance.collection('${auth.currentUser.uid}');
-
+  bool dark = true;
   Future<void> addUser(String log) {
     var uuid = Uuid();
     String uniqueid = uuid.v1().toString();
@@ -43,24 +47,39 @@ class _ArmViewState extends State<ArmView> {
         })
         .then((value) => print("Logged button Press"))
         .catchError((error) => print("Failed to add user: $error"));
-  } 
+  }
+  
   bool soundplaying = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: dark?Colors.black:Colors.white,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           SizedBox(
-            height: 10,
+            height: 30,
           ),
           Center(
-            child: Text("Octua",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 50,
-                    fontWeight: FontWeight.w300)),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (dark == true) {
+                    dark = false;
+                  } else {
+                    dark = true;
+                  }
+                });
+              },
+              child: Text("Octua",
+                  style: TextStyle(
+                      color: dark?Colors.white:Colors.black,
+                      fontSize: 50,
+                      fontWeight: FontWeight.w300)),
+            ),
+          ),
+          SizedBox(
+            height: 0,
           ),
           GestureDetector(
             onTap: () async {
@@ -133,7 +152,8 @@ class _ArmViewState extends State<ArmView> {
             },
             child: Container(
               decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.blue[100]),
+                  shape: BoxShape.circle, color: Colors.blue[100],border: Border.all(color: dark?Colors.blue[200]:Colors.grey[100],width: 10)),
+
               child: Center(
                 child: Text("Arm",
                     style: TextStyle(
@@ -141,8 +161,8 @@ class _ArmViewState extends State<ArmView> {
                         fontSize: 50,
                         fontWeight: FontWeight.w300)),
               ),
-              height: MediaQuery.of(context).size.width * 0.45,
-              width: MediaQuery.of(context).size.width * 0.45,
+              height: MediaQuery.of(context).size.width * 0.5,
+              width: MediaQuery.of(context).size.width * 0.5,
             ),
           ),
           GestureDetector(
@@ -152,7 +172,7 @@ class _ArmViewState extends State<ArmView> {
             },
             child: Container(
               decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.deepOrangeAccent[100]),
+                  shape: BoxShape.circle, color: Colors.deepOrangeAccent[100],border: Border.all(color: dark?Colors.deepOrangeAccent[200].withOpacity(0.3):Colors.grey[100],width: 10)),
               child: Center(
                 child: Text("Alert",
                     style: TextStyle(
@@ -160,8 +180,8 @@ class _ArmViewState extends State<ArmView> {
                         fontSize: 50,
                         fontWeight: FontWeight.w300)),
               ),
-              height: MediaQuery.of(context).size.width * 0.45,
-              width: MediaQuery.of(context).size.width * 0.45,
+              height: MediaQuery.of(context).size.width * 0.5,
+              width: MediaQuery.of(context).size.width * 0.5,
             ),
           ),
           GestureDetector(
@@ -171,7 +191,7 @@ class _ArmViewState extends State<ArmView> {
             },
             child: Container(
               decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.pink[100]),
+                  shape: BoxShape.circle, color: Colors.pink[100],border: Border.all(color: dark?Colors.pink[200].withOpacity(0.5):Colors.grey[100],width: 10)),
               child: Center(
                 child: Text("Log",
                     style: TextStyle(
@@ -179,8 +199,8 @@ class _ArmViewState extends State<ArmView> {
                         fontSize: 50,
                         fontWeight: FontWeight.w300)),
               ),
-              height: MediaQuery.of(context).size.width * 0.45,
-              width: MediaQuery.of(context).size.width * 0.45,
+              height: MediaQuery.of(context).size.width * 0.5,
+              width: MediaQuery.of(context).size.width * 0.5,
             ),
           )
         ],
