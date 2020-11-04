@@ -1,5 +1,6 @@
 import 'package:Octua/arm.dart';
 import 'package:Octua/auth/registerview.dart';
+import 'package:Octua/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +31,7 @@ class SignInView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         body: ListView(
           physics: BouncingScrollPhysics(),
           children: [
@@ -41,7 +42,7 @@ class SignInView extends StatelessWidget {
               child: Text(
                 'Login',
                 style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.white,
                     fontSize: 46,
                     fontWeight: FontWeight.w300),
               ),
@@ -59,9 +60,11 @@ class SignInView extends StatelessWidget {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            style: TextStyle(color: Colors.white),
                             keyboardType: TextInputType.emailAddress,
                             controller: _emailController,
                             decoration: InputDecoration(
+                              hintStyle: TextStyle(color: Colors.white),
                                 border: InputBorder.none, hintText: 'Email'),
                             validator: (value) {
                               if (value == null || value == '') {
@@ -85,9 +88,11 @@ class SignInView extends StatelessWidget {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            style: TextStyle(color: Colors.white),
                             controller: _passwordController,
                             obscureText: true,
                             decoration: InputDecoration(
+                              hintStyle: TextStyle(color: Colors.white),
                                 border: InputBorder.none, hintText: 'Password'),
                             validator: (value) {
                               if (value == null || value == '') {
@@ -119,7 +124,7 @@ class SignInView extends StatelessWidget {
 
                         // notify feedback model listeners
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => ArmView()));
+                            MaterialPageRoute(builder: (context) => App()));
                       }
                     },
                     child: new Container(
@@ -146,7 +151,7 @@ class SignInView extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.06,
                 width: MediaQuery.of(context).size.width * 0.85,
                 decoration: BoxDecoration(
-                  color: Colors.deepOrange[200],
+                  color: Colors.blue[400],
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -160,7 +165,7 @@ class SignInView extends StatelessWidget {
           Navigator.push(context,
                             MaterialPageRoute(builder: (context) => SignUpView()));
         },
-        backgroundColor: Colors.deepOrange[300],child: Icon(Icons.swap_calls),),
+        backgroundColor: Colors.blue[400],child: Icon(Icons.swap_calls),),
         );
   }
 }

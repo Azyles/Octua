@@ -37,6 +37,7 @@ dependencies:
   vibrate: ^0.0.4
   flutter_slidable: ^0.5.7
   sensors: ^0.4.2+5
+  device_info: ^0.4.2+8
 
   
 dev_dependencies:
