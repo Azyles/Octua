@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:Octua/arm.dart';
-import 'package:Octua/scan.dart';
+import 'package:Octua/old/arm.dart';
+import 'package:Octua/old/scan.dart';
 import 'package:flutter/material.dart';
 
 class TimerDelay extends StatefulWidget {

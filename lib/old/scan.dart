@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:Octua/alert.dart';
-import 'package:Octua/arm.dart';
+import 'package:Octua/old/alert.dart';
+import 'package:Octua/old/arm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';

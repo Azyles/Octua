@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:Octua/log.dart';
-import 'package:Octua/scan.dart';
-import 'package:Octua/scan.dart';
-import 'package:Octua/timerview.dart';
+import 'package:Octua/old/log.dart';
+import 'package:Octua/old/scan.dart';
+import 'package:Octua/old/scan.dart';
+import 'package:Octua/old/timerview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
