@@ -21,7 +21,7 @@ class _HomeViewState extends State<HomeView> {
     CollectionReference users = FirebaseFirestore.instance
         .collection('UserData')
         .doc("${auth.currentUser.uid}")
-        .collection('Cameras');
+        .collection('Accessory');
     // Call the user's CollectionReference to add a new user
     return users
         .doc(deviceId)
@@ -92,7 +92,7 @@ class _HomeViewState extends State<HomeView> {
                         stream: FirebaseFirestore.instance
                             .collection('UserData')
                             .doc("${auth.currentUser.uid}")
-                            .collection("Cameras")
+                            .collection("Accessory")
                             .snapshots(),
                         builder: (BuildContext context,
                             AsyncSnapshot<QuerySnapshot> snapshot) {

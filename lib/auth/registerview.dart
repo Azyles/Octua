@@ -45,12 +45,7 @@ class _SignUpViewState extends State<SignUpView> {
     // Call the user's CollectionReference to add a new user
     return users
         .doc("${auth.currentUser.uid}")
-        .set({
-          'pwd': pwd,
-          'pwdLock': false,
-          'Name': name,
-          'Alarm': false
-        })
+        .set({'pwd': pwd, 'pwdLock': false, 'Name': name, 'Alarm': false})
         .then((value) => print("Logged failed Attempt"))
         .catchError((error) => print("Failed to add user: $error"));
   }
@@ -79,12 +74,10 @@ class _SignUpViewState extends State<SignUpView> {
     // Call the user's CollectionReference to add a new user
     return users
         .doc("${androidInfo.androidId}")
-        .set({'Name': name, 'Alarm': false,'ID':"${androidInfo.androidId}"})
+        .set({'Name': name, 'Alarm': false, 'ID': "${androidInfo.androidId}"})
         .then((value) => print("Logged failed Attempt"))
         .catchError((error) => print("Failed to add user: $error"));
   }
-
-  
 
   String _feedback = '';
   bool checkValue = false;
@@ -344,7 +337,8 @@ class _SignUpViewState extends State<SignUpView> {
                                                   child: new Material(
                                                     child: new InkWell(
                                                       onTap: () async {
-                                                        await deviceData("Accessory");
+                                                        await deviceData(
+                                                            "Accessory");
                                                         await signInEmail(
                                                             _emailController
                                                                 .text,
@@ -353,6 +347,15 @@ class _SignUpViewState extends State<SignUpView> {
                                                         await addCamera(
                                                             _nameController
                                                                 .text);
+                                                        Future sleep2() {
+                                                          return new Future
+                                                                  .delayed(
+                                                              const Duration(
+                                                                  seconds: 2),
+                                                              () => "2");
+                                                        }
+
+                                                        sleep2;
                                                         Navigator.push(
                                                             context,
                                                             MaterialPageRoute(

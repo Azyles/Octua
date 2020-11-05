@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:Octua/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
@@ -42,7 +42,7 @@ class _CameraViewState extends State<CameraView> {
           'log': log,
           'id': uniqueid
         })
-        .then((value) => print("Logged failed Attempt"))
+        .then((value) => print("Logged Found User"))
         .catchError((error) => print("Failed to add user: $error"));
   }
 
@@ -76,6 +76,10 @@ class _CameraViewState extends State<CameraView> {
     return identifier;
   }
 
+  Future sleep2() {
+    return new Future.delayed(const Duration(seconds: 2), () => "2");
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -88,50 +92,81 @@ class _CameraViewState extends State<CameraView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: FutureBuilder(
-        future: getDeviceDetails(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection("UserData")
-                  .doc('${auth.currentUser.uid}')
-                  .collection("Cameras")
-                  .doc(snapshot.data)
-                  .snapshots(),
-              builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return Text("Loading");
-                }
-                var userDocument = snapshot.data;
-                if (userDocument["Alarm"]) {
-                  return Stack(
-                    children: [
-                      Container(
-                        height: 0.1,
-                        width: 0.1,
-                        child: CameraMlVision<List<Face>>(
-                          key: _scanKey,
-                          cameraLensDirection: cameraLensDirection,
-                          detector: detector.processImage,
-                          onResult: (faces) {
-                            if (faces == null || faces.isEmpty || !mounted) {
-                              return;
-                            }
-                            setState(() {
-                              detector.close();
-                              logdata("Face Detected");
-                            });
-                          },
-                          onDispose: () {
-                            detector.close();
-                          },
-                        ),
-                      ),
-                      Center(
+      body: PageView(
+        children: [
+          FutureBuilder(
+            future: getDeviceDetails(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection("UserData")
+                      .doc('${auth.currentUser.uid}')
+                      .collection("Accessory")
+                      .doc(snapshot.data)
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Text("Loading");
+                    }
+                    var userDocument = snapshot.data;
+                    if (userDocument["Alarm"]) {
+                      return Stack(
+                        children: [
+                          Container(
+                            height: 0.1,
+                            width: 0.1,
+                            child: CameraMlVision<List<Face>>(
+                              key: _scanKey,
+                              cameraLensDirection: cameraLensDirection,
+                              detector: detector.processImage,
+                              onResult: (faces) async {
+                                if (faces == null ||
+                                    faces.isEmpty ||
+                                    !mounted) {
+                                  return;
+                                }
+                                await logdata("Face Detected");
+                                sleep2;
+                                //setState(() {
+                                //  detector.close();
+                                //});
+                              },
+                              onDispose: () {
+                                detector.close();
+                              },
+                            ),
+                          ),
+                          Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.red),
+                              height: MediaQuery.of(context).size.width - 50,
+                              width: MediaQuery.of(context).size.width - 50,
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.black),
+                                  child: Center(
+                                    child: Text("Octua",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 50,
+                                            fontWeight: FontWeight.w300)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Center(
                         child: Container(
                           decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.red),
+                              shape: BoxShape.circle, color: Colors.green),
                           height: MediaQuery.of(context).size.width - 50,
                           width: MediaQuery.of(context).size.width - 50,
                           child: Padding(
@@ -149,51 +184,94 @@ class _CameraViewState extends State<CameraView> {
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return Center(
+                      );
+                    }
+                    return Container(
+                        color: Colors.black,
+                        child: Center(
+                            child: Text(
+                          "Octua",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                              fontWeight: FontWeight.w300),
+                        )));
+                  },
+                );
+              } else if (snapshot.hasError) {
+                throw snapshot.error;
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+          Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(height: 30,),
+                Center(
+                    child: Text(
+                  "Octua",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 45,
+                      fontWeight: FontWeight.w300),
+                )),
+                SizedBox(height: 1,),
+                GestureDetector(
+                  onTap: () {},
+                  child: Center(
                     child: Container(
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.green),
-                      height: MediaQuery.of(context).size.width - 50,
-                      width: MediaQuery.of(context).size.width - 50,
+                          shape: BoxShape.circle, color: Colors.pink[200]),
+                      height: MediaQuery.of(context).size.width - 130,
+                      width: MediaQuery.of(context).size.width - 130,
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.black),
-                          child: Center(
-                            child: Text("Octua",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 50,
-                                    fontWeight: FontWeight.w300)),
-                          ),
+                        child: Center(
+                          child: Text("Log",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w300)),
                         ),
                       ),
                     ),
-                  );
-                }
-                return Container(
-                    color: Colors.black,
-                    child: Center(
-                        child: Text(
-                      "Octua",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 35,
-                          fontWeight: FontWeight.w300),
-                    )));
-              },
-            );
-          } else if (snapshot.hasError) {
-            throw snapshot.error;
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                     await FirebaseAuth.instance.signOut();
+                            print("Signed Out");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => App()));
+                  },
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.blue[200]),
+                      height: MediaQuery.of(context).size.width - 130,
+                      width: MediaQuery.of(context).size.width - 130,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Center(
+                          child: Text("Log Out",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w300)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
