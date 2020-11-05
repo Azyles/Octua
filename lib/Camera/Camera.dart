@@ -27,7 +27,7 @@ class _CameraViewState extends State<CameraView> {
       .doc('${auth.currentUser.uid}')
       .collection("Log");
 
-  Future<void> addUser(String log) {
+  Future<void> logdata(String log) {
     var uuid = Uuid();
     String uniqueid = uuid.v1().toString();
     // Call the user's CollectionReference to add a new user
@@ -120,7 +120,7 @@ class _CameraViewState extends State<CameraView> {
                             }
                             setState(() {
                               detector.close();
-                              //do something
+                              logdata("Face Detected");
                             });
                           },
                           onDispose: () {
@@ -176,7 +176,6 @@ class _CameraViewState extends State<CameraView> {
                     ),
                   );
                 }
-
                 return Container(
                     color: Colors.black,
                     child: Center(
