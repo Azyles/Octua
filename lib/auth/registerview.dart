@@ -39,7 +39,7 @@ class _SignUpViewState extends State<SignUpView> {
     }
   }
 
-  Future<void> setPwd(String pwd, String typee, String name) {
+  Future<void> setPwd(String pwd, String name) {
     CollectionReference users =
         FirebaseFirestore.instance.collection('UserData');
     // Call the user's CollectionReference to add a new user
@@ -48,9 +48,23 @@ class _SignUpViewState extends State<SignUpView> {
         .set({
           'pwd': pwd,
           'pwdLock': false,
-          'Type': typee,
           'Name': name,
           'Alarm': false
+        })
+        .then((value) => print("Logged failed Attempt"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  Future<void> deviceData(String typee) async {
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('DeviceData');
+    // Call the user's CollectionReference to add a new user
+    return users
+        .doc("${androidInfo.androidId}")
+        .set({
+          'Type': typee,
+          'Name': "${androidInfo.androidId}",
         })
         .then((value) => print("Logged failed Attempt"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -64,11 +78,13 @@ class _SignUpViewState extends State<SignUpView> {
         .collection('Cameras');
     // Call the user's CollectionReference to add a new user
     return users
-        .doc("${androidInfo.id}")
+        .doc("${androidInfo.androidId}")
         .set({'Name': name, 'Alarm': false})
         .then((value) => print("Logged failed Attempt"))
         .catchError((error) => print("Failed to add user: $error"));
   }
+
+  
 
   String _feedback = '';
   bool checkValue = false;
@@ -258,14 +274,15 @@ class _SignUpViewState extends State<SignUpView> {
                                                   child: new Material(
                                                     child: new InkWell(
                                                       onTap: () async {
+                                                        await deviceData("App");
                                                         await signUpEmail(
                                                           _emailController.text,
-                                                          _passwordController.text,
+                                                          _passwordController
+                                                              .text,
                                                         );
                                                         await setPwd(
                                                             _passwordController
                                                                 .text,
-                                                            "App",
                                                             _nameController
                                                                 .text);
                                                         Navigator.push(
@@ -327,9 +344,14 @@ class _SignUpViewState extends State<SignUpView> {
                                                   child: new Material(
                                                     child: new InkWell(
                                                       onTap: () async {
+                                                        await deviceData("Accessory");
                                                         await signInEmail(
-                            _emailController.text, _passwordController.text);
-                                                        await addCamera(_nameController
+                                                            _emailController
+                                                                .text,
+                                                            _passwordController
+                                                                .text);
+                                                        await addCamera(
+                                                            _nameController
                                                                 .text);
                                                         Navigator.push(
                                                             context,

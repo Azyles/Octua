@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:Octua/Camera/Camera.dart';
 import 'package:Octua/Controller/Home.dart';
 import 'package:Octua/arm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +12,7 @@ import 'auth/registerview.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
 
-void main() {
+Future<void> main() async {
   runApp(MyApp());
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -18,7 +21,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -72,14 +74,15 @@ class RouteView extends StatefulWidget {
 }
 
 class _RouteViewState extends State<RouteView> {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
   FirebaseAuth auth = FirebaseAuth.instance;
-   
+
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> updateStatus(String acctype) {
-    
     CollectionReference users =
-      FirebaseFirestore.instance.collection('UserData');
+        FirebaseFirestore.instance.collection('UserData');
     // Call the user's CollectionReference to add a new user
     return users
         .doc("${auth.currentUser.uid}")
@@ -87,27 +90,60 @@ class _RouteViewState extends State<RouteView> {
         .then((value) => print("Logged failed Attempt"))
         .catchError((error) => print("Failed to add user: $error"));
   }
-  CollectionReference users = FirebaseFirestore.instance.collection('UserData');
+
+  CollectionReference users =
+      FirebaseFirestore.instance.collection('DeviceData');
+
+  static Future<String> getDeviceDetails() async {
+    String identifier;
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        identifier = build.androidId; //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        identifier = data.identifierForVendor; //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
+
+    //if (!mounted) return;
+    return identifier;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<DocumentSnapshot>(
-        future: users.doc("${auth.currentUser.uid}").get(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text("Something went wrong");
-          }
-
+      body: FutureBuilder(
+        future: getDeviceDetails(),
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            Map<String, dynamic> data = snapshot.data.data();
-            if (data["Type"] == "Camera") {
-              return CameraView();
-            } else if (data["Type"] == "App") {
-              return HomeView();
-            }
+            return FutureBuilder<DocumentSnapshot>(
+              future: users.doc(snapshot.data).get(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Text("Something went wrong");
+                }
+
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data = snapshot.data.data();
+                  if (data["Type"] == "Camera") {
+                    return CameraView();
+                  } else if (data["Type"] == "App") {
+                    return HomeView();
+                  }
+                }
+                return Text("loading");
+              },
+            );
+          } else if (snapshot.hasError) {
+            throw snapshot.error;
+          } else {
+            return Center(child: CircularProgressIndicator());
           }
-          return Text("loading");
         },
       ),
     );
