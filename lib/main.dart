@@ -125,18 +125,18 @@ class _RouteViewState extends State<RouteView> {
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.hasError) {
-                  return Text("Something went wrong");
+                  return Container(color: Colors.black,child: Center(child: Text("Error",style: TextStyle(color: Colors.white,fontSize: 35,fontWeight: FontWeight.w300),)));
                 }
 
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map<String, dynamic> data = snapshot.data.data();
-                  if (data["Type"] == "Camera") {
+                  if (data["Type"] == "Accessory") {
                     return CameraView();
                   } else if (data["Type"] == "App") {
                     return HomeView();
                   }
                 }
-                return Text("loading");
+                return Container(color: Colors.black,child: Center(child: Text("Octua",style: TextStyle(color: Colors.white,fontSize: 35,fontWeight: FontWeight.w300),)));
               },
             );
           } else if (snapshot.hasError) {

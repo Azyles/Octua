@@ -75,11 +75,11 @@ class _SignUpViewState extends State<SignUpView> {
     CollectionReference users = FirebaseFirestore.instance
         .collection('UserData')
         .doc("${auth.currentUser.uid}")
-        .collection('Cameras');
+        .collection('Accessory');
     // Call the user's CollectionReference to add a new user
     return users
         .doc("${androidInfo.androidId}")
-        .set({'Name': name, 'Alarm': false})
+        .set({'Name': name, 'Alarm': false,'ID':"${androidInfo.androidId}"})
         .then((value) => print("Logged failed Attempt"))
         .catchError((error) => print("Failed to add user: $error"));
   }
