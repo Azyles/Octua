@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:Octua/log.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -77,9 +78,52 @@ class _HomeViewState extends State<HomeView> {
                                   borderRadius: BorderRadius.circular(20)),
                               alignment: Alignment.center,
                               width: MediaQuery.of(context).size.width * 0.8,
-                              height: 80.0,
+                              height: 70.0,
                               child: Row(
-                                children: [],
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      userDocument.data()["Name"],
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.w300),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LogView()),
+                    );
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[200],
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      height: 50,
+                                      width: 100,
+                                      child: Center(
+                                          child: Text(
+                                        "Log",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w400),
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ],
                               )),
                         ),
                       ),

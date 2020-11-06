@@ -14,7 +14,7 @@ class LogView extends StatefulWidget {
 
 class _LogViewState extends State<LogView> {
   CollectionReference users =
-      FirebaseFirestore.instance.collection('${auth.currentUser.uid}');
+      FirebaseFirestore.instance.collection("UserData").doc('${auth.currentUser.uid}').collection("Log");
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class _LogViewState extends State<LogView> {
             return Center(
                 child: Text(
               'Something went wrong',
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.white),
             ));
           }
 
@@ -56,8 +56,8 @@ class _LogViewState extends State<LogView> {
                   actionPane: SlidableDrawerActionPane(),
                   actionExtentRatio: 0.25,
                   child: ListTile(
-                    title: new Text(document.data()['time'],style: TextStyle(color: Colors.red[400],fontWeight: FontWeight.w700),),
-                    subtitle: new Text(document.data()['log'],style: TextStyle(color: Colors.grey[700],fontWeight: FontWeight.w500)),
+                    title: new Text(document.data()['time'],style: TextStyle(color: Colors.blue[100],fontWeight: FontWeight.w400),),
+                    subtitle: new Text(document.data()['log'],style: TextStyle(color: Colors.grey[800],fontWeight: FontWeight.w700)),
                   ),
                   actions: <Widget>[
                     IconSlideAction(

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:Octua/old/log.dart';
+import 'package:Octua/log.dart';
 import 'package:Octua/old/scan.dart';
 import 'package:Octua/old/scan.dart';
 import 'package:Octua/old/timerview.dart';

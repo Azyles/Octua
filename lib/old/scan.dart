@@ -12,7 +12,7 @@ import 'package:flutter_camera_ml_vision/flutter_camera_ml_vision.dart';
 import 'package:intl/intl.dart';
 import 'package:sensors/sensors.dart';
 import 'package:uuid/uuid.dart';
-import 'log.dart';
+import '../log.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 

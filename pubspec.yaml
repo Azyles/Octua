@@ -39,6 +39,7 @@ dependencies:
   sensors: ^0.4.2+5
   device_info: ^0.4.2+8
   shared_preferences: ^0.5.12+4
+  flutter_tts: ^1.3.0
 
   
 dev_dependencies:

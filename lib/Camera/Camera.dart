@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:Octua/log.dart';
 import 'package:Octua/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,9 +11,12 @@ import 'package:flutter/services.dart';
 import 'package:device_info/device_info.dart';
 import 'package:intl/intl.dart';
 import 'package:sensors/sensors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
+
+enum TtsState { playing, stopped, paused, continued }
 
 class CameraView extends StatefulWidget {
   @override
@@ -56,6 +60,36 @@ class _CameraViewState extends State<CameraView> {
     enableTracking: true,
     mode: FaceDetectorMode.accurate,
   ));
+
+  static Future<String> getTime() async {
+    String nowTime;
+    nowTime = DateTime.now().toLocal().toString();
+    return nowTime;
+  }
+
+  _saveTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String nowTime = DateTime.now().toLocal().minute.toString();
+    print("Set");
+    await prefs.setString('Last_Logged', nowTime);
+  }
+
+  Future<bool> _viewTime() async {
+    bool a = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    String stringValue = prefs.getString('Last_Logged');
+
+    String nowTime = DateTime.now().toLocal().minute.toString();
+
+    if (stringValue == nowTime) {
+      print("Did Not Log");
+    } else {
+      a = true;
+      await _saveTime();
+    }
+    return a;
+  }
 
   static Future<String> getDeviceDetails() async {
     String identifier;
@@ -126,8 +160,9 @@ class _CameraViewState extends State<CameraView> {
                                     !mounted) {
                                   return;
                                 }
-                                await logdata("Face Detected");
-                                sleep2;
+                                if (await _viewTime()) {
+                                  await logdata("Face Detected");
+                                }
                                 //setState(() {
                                 //  detector.close();
                                 //});
@@ -186,16 +221,6 @@ class _CameraViewState extends State<CameraView> {
                         ),
                       );
                     }
-                    return Container(
-                        color: Colors.black,
-                        child: Center(
-                            child: Text(
-                          "Octua",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 35,
-                              fontWeight: FontWeight.w300),
-                        )));
                   },
                 );
               } else if (snapshot.hasError) {
@@ -209,7 +234,9 @@ class _CameraViewState extends State<CameraView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Center(
                     child: Text(
                   "Octua",
@@ -218,13 +245,23 @@ class _CameraViewState extends State<CameraView> {
                       fontSize: 45,
                       fontWeight: FontWeight.w300),
                 )),
-                SizedBox(height: 1,),
+                SizedBox(
+                  height: 1,
+                ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LogView()),
+                    );
+                  },
                   child: Center(
                     child: Container(
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.pink[200]),
+                          border:
+                              Border.all(color: Colors.pink[300], width: 12),
+                          shape: BoxShape.circle,
+                          color: Colors.pink[200]),
                       height: MediaQuery.of(context).size.width - 130,
                       width: MediaQuery.of(context).size.width - 130,
                       child: Padding(
@@ -242,17 +279,19 @@ class _CameraViewState extends State<CameraView> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                     await FirebaseAuth.instance.signOut();
-                            print("Signed Out");
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => App()));
+                    
+                    await FirebaseAuth.instance.signOut();
+                    print("Signed Out");
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => App()));
                   },
                   child: Center(
                     child: Container(
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.blue[200]),
+                          border:
+                              Border.all(color: Colors.blue[300], width: 12),
+                          shape: BoxShape.circle,
+                          color: Colors.blue[200]),
                       height: MediaQuery.of(context).size.width - 130,
                       width: MediaQuery.of(context).size.width - 130,
                       child: Padding(
