@@ -162,6 +162,8 @@ class _CameraViewState extends State<CameraView> {
                                 }
                                 if (await _viewTime()) {
                                   await logdata("Face Detected");
+                                } else {
+                                  print("Ignored");
                                 }
                                 //setState(() {
                                 //  detector.close();
@@ -279,7 +281,6 @@ class _CameraViewState extends State<CameraView> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    
                     await FirebaseAuth.instance.signOut();
                     print("Signed Out");
                     Navigator.push(context,

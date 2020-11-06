@@ -63,7 +63,7 @@ class _HomeViewState extends State<HomeView> {
                             fontWeight: FontWeight.w400),
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                     Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
@@ -171,7 +171,7 @@ class _HomeViewState extends State<HomeView> {
                                         child: Container(
                                           decoration: BoxDecoration(
                                               color:
-                                                  Colors.white.withOpacity(0.3),
+                                                  Colors.white.withOpacity(1),
                                               borderRadius:
                                                   BorderRadius.circular(20)),
                                           alignment: Alignment.center,

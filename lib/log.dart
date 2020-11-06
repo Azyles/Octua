@@ -27,7 +27,7 @@ class _LogViewState extends State<LogView> {
         backgroundColor: Colors.black,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: users.snapshots(),
+        stream: users.orderBy('timestamp',descending: true).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -43,7 +43,7 @@ class _LogViewState extends State<LogView> {
             );
           }
 
-          return new ListView(
+          return ListView(
             // ignore: deprecated_member_use
             children: snapshot.data.documents.map((DocumentSnapshot document) {
               if (document.data() == null) {
