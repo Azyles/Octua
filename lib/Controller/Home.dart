@@ -53,7 +53,7 @@ class _HomeViewState extends State<HomeView> {
                         alignment: Alignment.center)),
                 child: Column(
                   children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.07),
                     Center(
                       child: Text(
                         'OCTUA VISION',
@@ -231,7 +231,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
               );
               //return Text(userDocument["pwd"]);
-            })
+            }),
         /*
       Container(
         decoration: BoxDecoration(
@@ -243,6 +243,7 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),
       ),*/
+      
         );
   }
 }

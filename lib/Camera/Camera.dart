@@ -10,7 +10,6 @@ import 'package:flutter_camera_ml_vision/flutter_camera_ml_vision.dart';
 import 'package:flutter/services.dart';
 import 'package:device_info/device_info.dart';
 import 'package:intl/intl.dart';
-import 'package:sensors/sensors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -114,6 +113,8 @@ class _CameraViewState extends State<CameraView> {
     return new Future.delayed(const Duration(seconds: 2), () => "2");
   }
 
+  bool foundUser = false;
+
   @override
   void dispose() {
     super.dispose();
@@ -161,6 +162,9 @@ class _CameraViewState extends State<CameraView> {
                                   return;
                                 }
                                 if (await _viewTime()) {
+                                  setState(() {
+                                    foundUser = true;
+                                  });
                                   await logdata("Face Detected");
                                 } else {
                                   print("Ignored");
@@ -177,7 +181,10 @@ class _CameraViewState extends State<CameraView> {
                           Center(
                             child: Container(
                               decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.red),
+                                  shape: BoxShape.circle,
+                                  color: foundUser
+                                      ? Colors.red
+                                      : Colors.blue[200]),
                               height: MediaQuery.of(context).size.width - 50,
                               width: MediaQuery.of(context).size.width - 50,
                               child: Padding(
