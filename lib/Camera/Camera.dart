@@ -207,6 +207,7 @@ class _CameraViewState extends State<CameraView> {
                         ],
                       );
                     } else {
+                      foundUser = false;
                       return Center(
                         child: Container(
                           decoration: BoxDecoration(
