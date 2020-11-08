@@ -9,6 +9,7 @@ import 'package:flutter_camera_ml_vision/flutter_camera_ml_vision.dart';
 
 import 'package:flutter/services.dart';
 import 'package:device_info/device_info.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -113,7 +114,29 @@ class _CameraViewState extends State<CameraView> {
     return new Future.delayed(const Duration(seconds: 2), () => "2");
   }
 
+  initTts() {
+    flutterTts = FlutterTts();
+
+    _getLanguages();
+  }
+
+  dynamic languages;
+  String language;
+  Future _getLanguages() async {
+    languages = await flutterTts.getLanguages;
+    if (languages != null) setState(() => languages);
+  }
+
   bool foundUser = false;
+
+  FlutterTts flutterTts = FlutterTts();
+
+  TtsState ttsState = TtsState.stopped;
+
+  Future _speak(String message) async {
+    var result = await flutterTts.speak(message);
+    if (result == 1) setState(() => ttsState = TtsState.playing);
+  }
 
   @override
   void dispose() {
@@ -148,34 +171,37 @@ class _CameraViewState extends State<CameraView> {
                     if (userDocument["Alarm"]) {
                       return Stack(
                         children: [
-                          Container(
-                            height: 0.1,
-                            width: 0.1,
-                            child: CameraMlVision<List<Face>>(
-                              key: _scanKey,
-                              cameraLensDirection: cameraLensDirection,
-                              detector: detector.processImage,
-                              onResult: (faces) async {
-                                if (faces == null ||
-                                    faces.isEmpty ||
-                                    !mounted) {
-                                  return;
-                                }
-                                if (await _viewTime()) {
-                                  setState(() {
-                                    foundUser = true;
-                                  });
-                                  await logdata("Face Detected");
-                                } else {
-                                  print("Ignored");
-                                }
-                                //setState(() {
-                                //  detector.close();
-                                //});
-                              },
-                              onDispose: () {
-                                detector.close();
-                              },
+                          Center(
+                            child: Container(
+                              height: MediaQuery.of(context).size.height*0.1,
+                              width: MediaQuery.of(context).size.width*0.1,
+                              child: CameraMlVision<List<Face>>(
+                                key: _scanKey,
+                                cameraLensDirection: cameraLensDirection,
+                                detector: detector.processImage,
+                                onResult: (faces) async {
+                                  if (faces == null ||
+                                      faces.isEmpty ||
+                                      !mounted) {
+                                    return;
+                                  }
+                                  if (await _viewTime()) {
+                                    setState(() {
+                                      foundUser = true;
+                                    });
+                                    await logdata("Face Detected");
+                                    await _speak("Face Detected");
+                                  } else {
+                                    print("Ignored");
+                                  }
+                                  //setState(() {
+                                  //  detector.close();
+                                  //});
+                                },
+                                onDispose: () {
+                                  detector.close();
+                                },
+                              ),
                             ),
                           ),
                           Center(
@@ -209,22 +235,28 @@ class _CameraViewState extends State<CameraView> {
                     } else {
                       foundUser = false;
                       return Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.green),
-                          height: MediaQuery.of(context).size.width - 50,
-                          width: MediaQuery.of(context).size.width - 50,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.black),
-                              child: Center(
-                                child: Text("Octua",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 50,
-                                        fontWeight: FontWeight.w300)),
+                        child: GestureDetector(
+                          onTap: () {
+                            _speak("Secured");
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle, color: Colors.green),
+                            height: MediaQuery.of(context).size.width - 50,
+                            width: MediaQuery.of(context).size.width - 50,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.black),
+                                child: Center(
+                                  child: Text("Octua",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 50,
+                                          fontWeight: FontWeight.w300)),
+                                ),
                               ),
                             ),
                           ),

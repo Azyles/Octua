@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:Octua/log.dart';
+import 'package:Octua/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,12 +56,20 @@ class _HomeViewState extends State<HomeView> {
                   children: [
                     SizedBox(height: MediaQuery.of(context).size.height * 0.07),
                     Center(
-                      child: Text(
-                        'OCTUA VISION',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w400),
+                      child: GestureDetector(
+                        onLongPress: () async {
+                          await FirebaseAuth.instance.signOut();
+                          print("Signed Out");
+                          Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => App()));
+                        },
+                        child: Text(
+                          'OCTUA VISION',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w400),
+                        ),
                       ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.03),
